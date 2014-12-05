@@ -34,4 +34,7 @@ Just type :
 
    $ ./makefile
 
-This will create a virtual Python environment in the current folder, and 
+This will create a virtual Python environment in the current folder, and install the dependancies listed by ``requirements.txt``.
+Finally, it will perform a ``python setup.py install``.
+
+After executing this script, the connector will be available in the current folder (which is now a virtual Python environment).
