@@ -4,9 +4,10 @@ from twisted.internet import protocol
 
 
 class ConnectorFactory(protocol.Factory):
-    def __init__(self, connector):
+    def __init__(self, amqpuri, connector):
         self.clients = set()
-        self.connector
+        self.connector = connector
+        self.amqpuri = amqpuri
 
     def buildProtocol(self, addr):
-        return self.connector(self, addr)
+        return self.connector(self, addr, self.amqpuri)

@@ -9,9 +9,10 @@ import json
 
 
 class Connector(basic.LineReceiver):
-    def __init__(self, factory, addr):
+    def __init__(self, factory, addr, amqpuri):
         self.factory = factory
         self.address = addr
+        self.amqpuri = amqpuri
 
     def connectionMade(self):
         self.factory.clients.add(self)
@@ -49,7 +50,7 @@ class Connector(basic.LineReceiver):
         print('Send event: {0}'.format(rk))
 
         try:
-            with Connection(self.amqp) as conn:
+            with Connection(self.amqpuri) as conn:
                 with producers[conn].acquire(block=True) as producer:
                     producer.publish(
                         event,
