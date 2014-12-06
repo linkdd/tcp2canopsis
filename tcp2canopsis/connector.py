@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from tcp2canopsis.errors import ConnectorError
 from twisted.protocols import basic
 
 from kombu import Connection
@@ -18,19 +19,27 @@ class Connector(basic.LineReceiver):
         self.factory.clients.add(self)
 
     def connectionLost(self, reason):
-        print('Client disconnected: {0}'.format(reason))
         self.factory.clients.remove(self)
 
     def lineReceived(self, line):
-        # Parse event
+        try:
+            event = self.parse_event(line)
+            rk = self.generate_rk(event)
+            self.send_event(rk, event)
+
+        except ConnectorError as err:
+            print(err)
+
+    def parse_event(self, line):
         try:
             event = json.loads(line)
 
         except ValueError as err:
-            print('Error: Invalid event: {0}'.format(err))
-            return
+            raise ConnectorError('Invalid event: {0}'.format(str(err)))
 
-        # Generate routing key
+        return event
+
+    def generate_rk(self, event):
         try:
             rk = '{}.{}.{}.{}.{}'.format(
                 event['connector'],
@@ -44,11 +53,11 @@ class Connector(basic.LineReceiver):
                 rk = '{}.{}'.format(rk, event['resource'])
 
         except KeyError as err:
-            print('Error: Missing key in event: {0}'.format(err))
-            return
+            raise ConnectorError('Missing key in event: {0}'.format(str(err)))
 
-        print('Send event: {0}'.format(rk))
+        return rk
 
+    def send_event(self, rk, event):
         try:
             with Connection(self.amqpuri) as conn:
                 with producers[conn].acquire(block=True) as producer:
@@ -60,4 +69,4 @@ class Connector(basic.LineReceiver):
                     )
 
         except Exception as err:
-            print('Error: Impossible to send event: {0}'.format(err))
+            raise ConnectorError('Cannot send event: {0}'.format(str(err)))
