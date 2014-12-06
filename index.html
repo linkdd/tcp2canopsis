@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="TCP2Canopsis : This package provides a Canopsis connector which listen for events on a TCP port.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>TCP2Canopsis</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/linkdd/tcp2canopsis">View on GitHub</a>
+
+          <h1 id="project_title">TCP2Canopsis</h1>
+          <h2 id="project_tagline">This package provides a Canopsis connector which listen for events on a TCP port.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/linkdd/tcp2canopsis/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/linkdd/tcp2canopsis/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="tcp-to-canopsis-connector" class="anchor" href="#tcp-to-canopsis-connector" aria-hidden="true"><span class="octicon octicon-link"></span></a>TCP to Canopsis connector</h1>
+
+<p><img src="https://travis-ci.org/linkdd/tcp2canopsis.svg?branch=master" alt="Travis CI"></p>
+
+<p>This package provides a connector which listen for events on a TCP port.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Run the script on a designated port (<code>8000</code> in this example) and with the URL
+of the AMQP server :</p>
+
+<pre><code>$ tcp2canopsis 8000 amqp://guest:guest@localhost:5672/
+</code></pre>
+
+<p>Then use <code>telnet</code> to publish events :</p>
+
+<pre><code>$ telnet localhost 8000
+Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+{"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 0, "output": "test output"}
+{"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 1, "output": "test output 2"}
+{"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 0, "output": "test output 3"}
+Connection closed by foreign host.
+</code></pre>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a> Installation</h2>
+
+<p>Just type :</p>
+
+<pre><code>$ ./makefile
+</code></pre>
+
+<p>This will create a virtual Python environment in the current folder, and install the dependancies listed by <code>requirements.txt</code>.
+Finally, it will perform a <code>python setup.py install</code>.</p>
+
+<p>After executing this script, the connector will be available in the current folder (which is now a virtual Python environment).</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">TCP2Canopsis maintained by <a href="https://github.com/linkdd">linkdd</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
