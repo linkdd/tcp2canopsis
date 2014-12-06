@@ -1,6 +1,9 @@
 TCP to Canopsis connector
 =========================
 
+.. image:: https://travis-ci.org/linkdd/tcp2canopsis.svg?branch=master
+
+
 This package provides a connector which listen for events on a TCP port.
 
 Usage
