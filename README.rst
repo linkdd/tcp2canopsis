@@ -6,11 +6,12 @@ This package provides a connector which listen for events on a TCP port.
 Usage
 -----
 
-Run the script on a designated port (``8000`` in this example) :
+Run the script on a designated port (``8000`` in this example) and with the URL
+of the AMQP server :
 
 .. code-block::
 
-   $ tcp2canopsis 8000
+   $ tcp2canopsis 8000 amqp://guest:guest@localhost:5672/
 
 Then use ``telnet`` to publish events :
 
