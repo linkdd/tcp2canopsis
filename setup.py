@@ -13,7 +13,7 @@ setup(
     author_email='david.jose.delassus@gmail.com',
     description='Canopsis Connector which listen for JSON events on TCP port',
     url='https://github.com/linkdd/tcp2canopsis',
-    download_url='https://github.com/linkdd/tcp2canopsis/tarball/0.1',
+    download_url='https://github.com/linkdd/tcp2canopsis/tarball/0.1.1',
     keywords=['canopsis'],
     classifiers=[],
 
