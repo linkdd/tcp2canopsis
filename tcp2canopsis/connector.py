@@ -10,10 +10,13 @@ import json
 
 
 class Connector(basic.LineReceiver):
-    def __init__(self, factory, addr, amqpuri):
+    def __init__(self, factory, addr):
         self.factory = factory
         self.address = addr
-        self.amqpuri = amqpuri
+        self.authenticated = False
+
+    def isAuthenticated(self):
+        return self.authenticated
 
     def connectionMade(self):
         self.factory.clients.add(self)
@@ -23,12 +26,28 @@ class Connector(basic.LineReceiver):
 
     def lineReceived(self, line):
         try:
-            event = self.parse_event(line)
-            rk = self.generate_rk(event)
-            self.send_event(rk, event)
+            if not self.isAuthenticated():
+                self.tryAuthentication(line)
+
+            else:
+                self.processLine(line)
 
         except ConnectorError as err:
             print(err)
+
+    def tryAuthentication(self, line):
+        if line == self.factory.token:
+            self.authenticated = True
+
+        else:
+            raise ConnectorError('Client {0} not authenticated'.format(
+                self.address
+            ))
+
+    def processLine(self, line):
+        event = self.parse_event(line)
+        rk = self.generate_rk(event)
+        self.send_event(rk, event)
 
     def parse_event(self, line):
         try:
@@ -59,7 +78,7 @@ class Connector(basic.LineReceiver):
 
     def send_event(self, rk, event):
         try:
-            with Connection(self.amqpuri) as conn:
+            with Connection(self.factory.amqpuri) as conn:
                 with producers[conn].acquire(block=True) as producer:
                     producer.publish(
                         event,

@@ -25,15 +25,21 @@ if __name__ == '__main__':
         nargs=1,
         help='AMQP url to send event (required if no config file provided'
     )
+    parser.add_argument(
+        '-t', '--token',
+        nargs=1,
+        help='Authentication token'
+    )
     args = parser.parse_args()
 
     if args.config is None:
-        if args.port is None or args.amqp is None:
+        if args.port is None or args.amqp is None or args.token is None:
             parser.print_usage()
             sys.exit(1)
 
         port = args.port[0]
         amqp = args.amqp[0]
+        token = args.token[0]
 
     else:
         cfgpath = os.path.expanduser(args.config[0])
@@ -44,6 +50,7 @@ if __name__ == '__main__':
 
             port = int(config['tcp2canopsis']['port'])
             amqp = config['tcp2canopsis']['amqp']
+            token = config['tcp2canopsis']['token']
 
         except IOError as err:
             print('Impossible to open file {0}: {1}'.format(cfgpath, err))
@@ -53,4 +60,4 @@ if __name__ == '__main__':
             print('Impossible to parse config {0}: {1}'.format(cfgpath, err))
             sys.exit(1)
 
-    run_daemon(port, amqp)
+    run_daemon(port, amqp, token)

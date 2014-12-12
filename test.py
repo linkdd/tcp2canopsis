@@ -4,13 +4,28 @@ from tcp2canopsis.factory import ConnectorFactory
 from tcp2canopsis.errors import ConnectorError
 from tcp2canopsis.connector import Connector
 import unittest
+import json
 
 
 class TestTCP2Canopsis(unittest.TestCase):
     def setUp(self):
+        self.event = {
+            'connector': 'unittest',
+            'connector_name': 'tcp2canopsis',
+            'event_type': 'check',
+            'source_type': 'resource',
+            'component': 'connector',
+            'resource': 'test',
+        }
+        self.eventjson = json.dumps(self.event)
+
         self.amqpuri = 'amqp://'
-        self.factory = ConnectorFactory(self.amqpuri, Connector)
-        self.connector = self.factory.buildProtocol(None)
+        self.token = 'testToken'
+
+        self.factory = ConnectorFactory(self.amqpuri, self.token, Connector)
+
+        self.connector = self.factory.buildProtocol('noaddress')
+        self.connector.send_event = lambda rk, event: None
 
     def tearDown(self):
         del self.factory
@@ -37,24 +52,34 @@ class TestTCP2Canopsis(unittest.TestCase):
             self.connector.parse_event('{"foo":')
 
     def test_connector_generate_rk(self):
-        event = {
-            'connector': 'unittest',
-            'connector_name': 'tcp2canopsis',
-            'event_type': 'check',
-            'source_type': 'resource',
-            'component': 'connector',
-            'resource': 'generate_rk',
-        }
-        rk = self.connector.generate_rk(event)
+        rk = self.connector.generate_rk(self.event)
 
         self.assertEqual(
-            'unittest.tcp2canopsis.check.resource.connector.generate_rk',
+            'unittest.tcp2canopsis.check.resource.connector.test',
             rk
         )
 
     def test_connector_generate_rk_fail(self):
         with self.assertRaises(ConnectorError):
             self.connector.generate_rk({})
+
+    def test_connector_tryAuthentication_fail(self):
+        with self.assertRaises(ConnectorError):
+            self.connector.tryAuthentication('')
+
+    def test_connector_not_isAuthenticated(self):
+        self.assertFalse(self.connector.isAuthenticated())
+
+    def test_connector_isAuthenticated(self):
+        self.connector.tryAuthentication(self.token)
+        self.assertTrue(self.connector.isAuthenticated())
+
+    def test_connector_processLine(self):
+        self.connector.processLine(self.eventjson)
+
+    def test_connector_processLine_fail(self):
+        with self.assertRaises(ConnectorError):
+            self.connector.processLine('')
 
 
 if __name__ == '__main__':
