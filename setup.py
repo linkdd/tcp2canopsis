@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tcp2canopsis',
-    version='0.2',
+    version='0.3',
     license='MIT',
 
     author='David Delassus',
