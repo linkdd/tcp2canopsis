@@ -14,7 +14,7 @@ of the AMQP server :
 
 .. code-block::
 
-   $ tcp2canopsis -p 8000 -a "amqp://guest:guest@localhost:5672/"
+   $ tcp2canopsis -p 8000 -a "amqp://guest:guest@localhost:5672/" -t token
 
 Then use ``telnet`` to publish events :
 
@@ -24,6 +24,7 @@ Then use ``telnet`` to publish events :
    Trying ::1...
    Connected to localhost.
    Escape character is '^]'.
+   token
    {"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 0, "output": "test output"}
    {"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 1, "output": "test output 2"}
    {"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 0, "output": "test output 3"}
@@ -35,7 +36,8 @@ Or in a JSON file :
 
    {"tcp2canopsis": {
        "port": 8000,
-       "amqp": "amqp://guest:guest@localhost:5672/"
+       "amqp": "amqp://guest:guest@localhost:5672/",
+       "token": "token"
    }}
 
 And load the file using :
