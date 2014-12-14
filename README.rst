@@ -46,6 +46,38 @@ And load the file using :
 
    $ tcp2canopsis -c path/to/config.json
 
+SSL
+---
+
+If using configuration via command line, use those options :
+
+.. code-block::
+
+   $ tcp2canopsis --ssl-cert server.pem --ssl-key server.key
+
+*NB: other options are still mandatory*
+
+Or via the configuration file :
+
+.. code-block:: javascript
+
+   {"tcp2canopsis": {
+       "port": 8000,
+       "amqp": "amqp://guest:guest@localhost:5672/",
+       "token": "token",
+       "ssl-cert": "server.pem",
+       "ssl-key": "server.key"
+   }}
+
+Then, instead of ``telnet``, use this command to test the connector :
+
+.. code-block::
+
+   $ openssl s_client -quiet -connect localhost:8000 -CAfile ca.pem -crlf
+   testtoken
+   {"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 0, "output": "test output"}
+
+
 Installation
 ------------
 

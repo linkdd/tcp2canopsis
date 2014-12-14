@@ -3,7 +3,9 @@
 from tcp2canopsis.factory import ConnectorFactory
 from tcp2canopsis.errors import ConnectorError
 from tcp2canopsis.connector import Connector
+from tcp2canopsis.daemon import Application
 import unittest
+import logging
 import json
 
 
@@ -81,6 +83,50 @@ class TestTCP2Canopsis(unittest.TestCase):
         with self.assertRaises(ConnectorError):
             self.connector.processLine('')
 
+    def test_daemon_config_fail(self):
+        with self.assertRaises(RuntimeError):
+            Application({})
+
+    def test_daemon_config(self):
+        app = Application({
+            'port': 8000,
+            'amqp': 'amqp://',
+            'token': 'test',
+        })
+
+        self.assertEqual(8000, app.config.get('port', None))
+        self.assertEqual('amqp://', app.config.get('amqp', None))
+        self.assertEqual('test', app.config.get('token', None))
+        self.assertEqual(None, app.config.get('ssl-cert', None))
+        self.assertEqual(None, app.config.get('ssl-key', None))
+
+        self.assertFalse(app.ssl)
+        self.assertEqual('tcp:8000', app.server)
+
+    def test_daemon_config_ssl(self):
+        app = Application({
+            'port': 8000,
+            'amqp': 'amqp://',
+            'token': 'test',
+            'ssl-cert': 'cert.pem',
+            'ssl-key': 'key.pem'
+        })
+
+        self.assertEqual(8000, app.config.get('port', None))
+        self.assertEqual('amqp://', app.config.get('amqp', None))
+        self.assertEqual('test', app.config.get('token', None))
+        self.assertEqual('cert.pem', app.config.get('ssl-cert', None))
+        self.assertEqual('key.pem', app.config.get('ssl-key', None))
+
+        self.assertTrue(app.ssl)
+        self.assertEqual(
+            'ssl:8000:privateKey=key.pem:certKey=cert.pem',
+            app.server
+        )
+
 
 if __name__ == '__main__':
+    logger = logging.getLogger('tcp2canopsis')
+    logger.addHandler(logging.NullHandler())
+
     unittest.main()

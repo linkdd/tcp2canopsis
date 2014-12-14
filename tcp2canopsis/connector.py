@@ -19,9 +19,14 @@ class Connector(basic.LineReceiver):
         return self.authenticated
 
     def connectionMade(self):
+        self.factory.logger.info('Client <{0}> connected'.format(self.address))
         self.factory.clients.add(self)
 
     def connectionLost(self, reason):
+        self.factory.logger.info('Client <{0}> disconnected: {1}'.format(
+            self.address,
+            reason
+        ))
         self.factory.clients.remove(self)
 
     def lineReceived(self, line):
@@ -33,14 +38,18 @@ class Connector(basic.LineReceiver):
                 self.processLine(line)
 
         except ConnectorError as err:
-            print(err)
+            self.factory.log_exception(err)
 
     def tryAuthentication(self, line):
         if line == self.factory.token:
             self.authenticated = True
 
+            self.factory.logger.info('Client <{0}> authenticated'.format(
+                self.address
+            ))
+
         else:
-            raise ConnectorError('Client {0} not authenticated'.format(
+            raise ConnectorError('Client <{0}> not authenticated'.format(
                 self.address
             ))
 
@@ -78,6 +87,8 @@ class Connector(basic.LineReceiver):
 
     def send_event(self, rk, event):
         try:
+            self.factory.logger.debug('Send event: {0}'.format(rk))
+
             with Connection(self.factory.amqpuri) as conn:
                 with producers[conn].acquire(block=True) as producer:
                     producer.publish(
