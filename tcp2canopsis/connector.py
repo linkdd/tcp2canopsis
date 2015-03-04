@@ -8,12 +8,14 @@ from kombu.pools import producers
 
 import json
 
-
 class Connector(basic.LineReceiver):
     def __init__(self, factory, addr):
         self.factory = factory
         self.address = addr
         self.authenticated = False
+        if self.factory.realroute == 'devnull':
+            self.processLine = self.processDevNull
+            self.authenticated = True
 
     def isAuthenticated(self):
         return self.authenticated
@@ -41,6 +43,10 @@ class Connector(basic.LineReceiver):
             self.factory.log_exception(err)
 
     def tryAuthentication(self, line):
+        if self.factory.realroute == 'devnull':
+            self.authenticated = True
+            return
+
         if line == self.factory.token:
             self.authenticated = True
 
@@ -57,6 +63,9 @@ class Connector(basic.LineReceiver):
         event = self.parse_event(line)
         rk = self.generate_rk(event)
         self.send_event(rk, event)
+
+    def processDevNull(self, line):
+        pass
 
     def parse_event(self, line):
         try:

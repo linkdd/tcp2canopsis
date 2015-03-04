@@ -16,7 +16,8 @@ class Application(object):
             'amqp': {'type': 'string', 'required': True},
             'token': {'type': 'string', 'required': True},
             'ssl-cert': {'type': 'string', 'required': False},
-            'ssl-key': {'type': 'string', 'required': False}
+            'ssl-key': {'type': 'string', 'required': False},
+            'realroute': {'type': 'string', 'required': False}
         }
     }
 
@@ -31,6 +32,10 @@ class Application(object):
 
         self.config = config
         self.ssl = 'ssl-cert' in self.config and 'ssl-key' in self.config
+
+        self.realroute = 'amqp'
+        if 'realroute' in self.config:
+            self.realroute = self.config['realroute']
 
     @property
     def server(self):
@@ -48,6 +53,7 @@ class Application(object):
         factory = ConnectorFactory(
             self.config['amqp'],
             self.config['token'],
+            self.config['realroute'],
             Connector
         )
 
