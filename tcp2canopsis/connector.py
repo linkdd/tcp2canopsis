@@ -8,6 +8,7 @@ from kombu.pools import producers
 
 import json
 
+
 class Connector(basic.LineReceiver):
     def __init__(self, factory, addr):
         self.factory = factory
