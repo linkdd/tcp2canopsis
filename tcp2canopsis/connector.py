@@ -15,7 +15,7 @@ class Connector(basic.LineReceiver):
         self.authenticated = False
 
         if self.factory.realroute == 'devnull':
-            self.processLine = self.processDevNull
+            self.processLine = self.processLineDevNull
             self.authenticated = True
 
         elif self.factory.realroute == 'amqp':
