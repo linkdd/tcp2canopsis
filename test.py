@@ -84,6 +84,19 @@ class TestTCP2Canopsis(unittest.TestCase):
         with self.assertRaises(ConnectorError):
             self.connector.processLine('')
 
+    def test_connector_processLine_not_None(self):
+        self.assertNotEqual(self.connector.processLine, None)
+
+    def test_connector_change_processLine_devnull(self):
+        self.connector.factory.realroute = 'devnull'
+        self.connector.setRealRoute()
+        self.assertEqual(self.connector.processLine, self.connector.processLineDevNull)
+
+    def test_connector_change_processLine_amqp(self):
+        self.connector.factory.realroute = 'amqp'
+        self.connector.setRealRoute()
+        self.assertEqual(self.connector.processLine, self.connector.processLineAMQP)
+
     def test_daemon_config_fail(self):
         with self.assertRaises(RuntimeError):
             Application({})

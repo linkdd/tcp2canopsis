@@ -15,6 +15,9 @@ class Connector(basic.LineReceiver):
         self.address = addr
         self.authenticated = False
 
+        self.setRealRoute()
+
+    def setRealRoute(self):
         if self.factory.realroute == 'devnull':
             self.processLine = self.processLineDevNull
             self.authenticated = True
@@ -67,8 +70,7 @@ class Connector(basic.LineReceiver):
                 self.address
             ))
 
-    def processLine(self, line):
-        pass
+    processLine = None
 
     def processLineAMQP(self, line):
         event = self.parse_event(line)
