@@ -46,6 +46,15 @@ And load the file using :
 
    $ tcp2canopsis -c path/to/config.json
 
+
+Configuration keys
+------------------
+
+ - ``port``: AMQP port
+ - ``amqp``: AMQP URI
+ - ``token``: authentication token
+ - ``realroute``: ``amqp`` or ``devnull``. ``devnull`` just ignore events
+
 SSL
 ---
 
