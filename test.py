@@ -23,8 +23,9 @@ class TestTCP2Canopsis(unittest.TestCase):
 
         self.amqpuri = 'amqp://'
         self.token = 'testToken'
+        self.realroute = 'amqp'
 
-        self.factory = ConnectorFactory(self.amqpuri, self.token, Connector)
+        self.factory = ConnectorFactory(self.amqpuri, self.token, self.realroute, Connector)
 
         self.connector = self.factory.buildProtocol('noaddress')
         self.connector.send_event = lambda rk, event: None

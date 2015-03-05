@@ -5,6 +5,7 @@ from tcp2canopsis.connector import Connector
 from twisted.internet import reactor, endpoints
 
 from validictory.validator import FieldValidationError
+from validictory.validator import RequiredFieldValidationError
 from validictory import validate
 
 
@@ -28,6 +29,9 @@ class Application(object):
             validate(config, self.SCHEMA)
 
         except FieldValidationError as err:
+            raise RuntimeError('Invalid configuration: {0}'.format(err))
+
+        except RequiredFieldValidationError as err:
             raise RuntimeError('Invalid configuration: {0}'.format(err))
 
         self.config = config
