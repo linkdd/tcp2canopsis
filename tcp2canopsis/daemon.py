@@ -32,7 +32,7 @@ class Application(object):
             raise RuntimeError('Invalid configuration: {0}'.format(err))
 
         except RequiredFieldValidationError as err:
-            raise RuntimeError('Invalid configuration: {0}'.format(err))
+            raise RuntimeError('Missing required parameter: {0}'.format(err))
 
         self.config = config
         self.ssl = 'ssl-cert' in self.config and 'ssl-key' in self.config
