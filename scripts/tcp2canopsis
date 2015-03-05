@@ -28,6 +28,10 @@ if __name__ == '__main__':
         help='AMQP url to send event (required if no config file provided'
     )
     parser.add_argument(
+        '-r', '--realroute', choices=['amqp', 'devnull'],
+        help='Send event to following route'
+    )
+    parser.add_argument(
         '-t', '--token',
         help='Authentication token'
     )

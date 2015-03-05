@@ -5,11 +5,12 @@ import logging
 
 
 class ConnectorFactory(protocol.Factory):
-    def __init__(self, amqpuri, token, connector):
+    def __init__(self, amqpuri, token, realroute, connector):
         self.clients = set()
         self.connector = connector
         self.amqpuri = amqpuri
         self.token = token
+        self.realroute = realroute
 
         self.logger = logging.getLogger('tcp2canopsis')
         self.logger.setLevel(logging.INFO)

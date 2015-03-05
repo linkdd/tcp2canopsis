@@ -5,6 +5,7 @@ from tcp2canopsis.connector import Connector
 from twisted.internet import reactor, endpoints
 
 from validictory.validator import FieldValidationError
+from validictory.validator import RequiredFieldValidationError
 from validictory import validate
 
 
@@ -16,7 +17,8 @@ class Application(object):
             'amqp': {'type': 'string', 'required': True},
             'token': {'type': 'string', 'required': True},
             'ssl-cert': {'type': 'string', 'required': False},
-            'ssl-key': {'type': 'string', 'required': False}
+            'ssl-key': {'type': 'string', 'required': False},
+            'realroute': {'type': 'string', 'required': False}
         }
     }
 
@@ -29,8 +31,15 @@ class Application(object):
         except FieldValidationError as err:
             raise RuntimeError('Invalid configuration: {0}'.format(err))
 
+        except RequiredFieldValidationError as err:
+            raise RuntimeError('Missing required parameter: {0}'.format(err))
+
         self.config = config
         self.ssl = 'ssl-cert' in self.config and 'ssl-key' in self.config
+
+        self.realroute = 'amqp'
+        if 'realroute' in self.config:
+            self.realroute = self.config['realroute']
 
     @property
     def server(self):
@@ -48,6 +57,7 @@ class Application(object):
         factory = ConnectorFactory(
             self.config['amqp'],
             self.config['token'],
+            self.config['realroute'],
             Connector
         )
 
