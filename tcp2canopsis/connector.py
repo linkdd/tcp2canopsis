@@ -15,18 +15,18 @@ class Connector(basic.LineReceiver):
         self.address = addr
         self.authenticated = False
 
-        self.setRealRoute()
+        self.processLine = self.getRealRoute()
 
-    def setRealRoute(self):
+    def getRealRoute(self):
         if self.factory.realroute == 'devnull':
-            self.processLine = self.processLineDevNull
             self.authenticated = True
+            return self.processLineDevNull
 
         elif self.factory.realroute == 'amqp':
-            self.processLine = self.processLineAMQP
+            return self.processLineAMQP
 
         else:
-            self.processLine = self.processLineAMQP
+            return self.processLineAMQP
 
     def isAuthenticated(self):
         return self.authenticated
@@ -69,8 +69,6 @@ class Connector(basic.LineReceiver):
             raise ConnectorError('Client <{0}> not authenticated'.format(
                 self.address
             ))
-
-    processLine = None
 
     def processLineAMQP(self, line):
         event = self.parse_event(line)
