@@ -10,13 +10,13 @@ Usage
 -----
 
 Run the script on a designated port (``8000`` in this example) and with the URL
-of the AMQP server :
+of the AMQP server:
 
 .. code-block::
 
    $ tcp2canopsis -p 8000 -a "amqp://guest:guest@localhost:5672/" -t token
 
-Then use ``telnet`` to publish events :
+Then use ``telnet`` to publish events:
 
 .. code-block::
 
@@ -30,7 +30,7 @@ Then use ``telnet`` to publish events :
    {"connector": "test", "connector_name": "testname", "event_type": "check", "source_type": "resource", "component": "testcmp", "resource": "testrsrc", "state": 0, "output": "test output 3"}
    Connection closed by foreign host.
 
-Or in a JSON file :
+Or in a JSON file:
 
 .. code-block:: javascript
 
@@ -40,7 +40,7 @@ Or in a JSON file :
        "token": "token"
    }}
 
-And load the file using :
+And load the file using:
 
 .. code-block::
 
@@ -58,7 +58,7 @@ Configuration keys
 SSL
 ---
 
-If using configuration via command line, use those options :
+If using configuration via command line, use those options:
 
 .. code-block::
 
@@ -66,7 +66,7 @@ If using configuration via command line, use those options :
 
 *NB: other options are still mandatory*
 
-Or via the configuration file :
+Or via the configuration file:
 
 .. code-block:: javascript
 
@@ -78,7 +78,7 @@ Or via the configuration file :
        "ssl-key": "server.key"
    }}
 
-Then, instead of ``telnet``, use this command to test the connector :
+Then, instead of ``telnet``, use this command to test the connector:
 
 .. code-block::
 
@@ -90,13 +90,13 @@ Then, instead of ``telnet``, use this command to test the connector :
 Installation
 ------------
 
-Just type :
+Just type:
 
 .. code-block::
 
    $ pip install tcp2canopsis
 
-Or, to install it in a locally :
+Or, to install it in a locally:
 
 .. code-block::
 
@@ -106,3 +106,28 @@ This will create a virtual Python environment in the current folder, and install
 Finally, it will perform a ``python setup.py install``.
 
 After executing this script, the connector will be available in the current folder (which is now a virtual Python environment).
+
+Connector on boot
+-----------------
+
+CentOS
+++++++
+
+Copy the initscript and add the configuration file:
+
+.. code-block::
+
+   $ cp contrib/tcp2canopsis.init.centos.sh /etc/init.d/tcp2canopsis
+   $ cat > /etc/sysconfig/tcp2canopsis << "EOF"
+   CONNECTOR_DIR="/path/to/tcp2canopsis/virtualenv"
+   EOF
+
+Debian
+++++++
+
+TODO
+
+systemd
++++++++
+
+TODO
