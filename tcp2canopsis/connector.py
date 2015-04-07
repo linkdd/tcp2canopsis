@@ -29,7 +29,7 @@ class Connector(basic.LineReceiver):
             return self.processLineAMQP
 
     def isAuthenticated(self):
-        return self.authenticated
+        return self.factory.token is None or self.authenticated
 
     def connectionMade(self):
         self.factory.logger.info('Client <{0}> connected'.format(self.address))
