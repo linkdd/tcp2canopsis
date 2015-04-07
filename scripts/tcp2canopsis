@@ -48,6 +48,13 @@ if __name__ == '__main__':
     if args.config is None:
         config = vars(args)
 
+        del_opts = [opt for opt in config if config[opt] is None]
+        config = {
+            opt: val
+            for opt, val in config.items()
+            if opt not in del_opts
+        }
+
     else:
         cfgpath = os.path.expanduser(args.config)
 
