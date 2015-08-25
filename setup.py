@@ -25,6 +25,7 @@ setup(
         'service_identity>=14.0.0',
         'Twisted>=14.0.2',
         'kombu>=3.0.21',
-        'validictory>=0.9.3'
+        'validictory>=0.9.3',
+        'chardet>=2.3.0'
     ]
 )

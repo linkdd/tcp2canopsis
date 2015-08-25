@@ -6,6 +6,8 @@ from twisted.protocols import basic
 from kombu import Connection
 from kombu.pools import producers
 
+from sys import version as PYVER
+import chardet
 import json
 
 
@@ -43,15 +45,30 @@ class Connector(basic.LineReceiver):
         self.factory.clients.remove(self)
 
     def lineReceived(self, line):
-        try:
-            if not self.isAuthenticated():
-                self.tryAuthentication(line)
+        # Make sure line is correctly encoded
+        if PYVER >= '3':
+            line = bytes(line)  # in Python3, chardet excepts a bytes string
 
-            else:
-                self.processLine(line)
+        result = chardet.detect(line)
 
-        except ConnectorError as err:
-            self.factory.log_exception(err)
+        if result['encoding'] is None:
+            self.factory.logger.error(
+                'Error: unable to decode data, ignoring...'
+            )
+
+        else:
+            line = line.decode(result['encoding'])
+
+            # Process decoded data
+            try:
+                if not self.isAuthenticated():
+                    self.tryAuthentication(line)
+
+                else:
+                    self.processLine(line)
+
+            except ConnectorError as err:
+                self.factory.log_exception(err)
 
     def tryAuthentication(self, line):
         if self.factory.realroute == 'devnull':
@@ -89,7 +106,7 @@ class Connector(basic.LineReceiver):
 
     def generate_rk(self, event):
         try:
-            rk = '{}.{}.{}.{}.{}'.format(
+            rk = u'{}.{}.{}.{}.{}'.format(
                 event['connector'],
                 event['connector_name'],
                 event['event_type'],
@@ -98,7 +115,7 @@ class Connector(basic.LineReceiver):
             )
 
             if event['source_type'] == 'resource':
-                rk = '{}.{}'.format(rk, event['resource'])
+                rk = u'{}.{}'.format(rk, event['resource'])
 
         except KeyError as err:
             raise ConnectorError('Missing key in event: {0}'.format(str(err)))
@@ -107,7 +124,7 @@ class Connector(basic.LineReceiver):
 
     def send_event(self, rk, event):
         try:
-            self.factory.logger.debug('Send event: {0}'.format(rk))
+            self.factory.logger.debug(u'Send event: {0}'.format(rk))
 
             with Connection(self.factory.amqpuri) as conn:
                 with producers[conn].acquire(block=True) as producer:
