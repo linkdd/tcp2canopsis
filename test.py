@@ -24,8 +24,15 @@ class TestTCP2Canopsis(unittest.TestCase):
         self.amqpuri = 'amqp://'
         self.token = 'testToken'
         self.realroute = 'amqp'
+        self.cache_time = 5
 
-        self.factory = ConnectorFactory(self.amqpuri, self.token, self.realroute, Connector)
+        self.factory = ConnectorFactory(
+            self.amqpuri,
+            self.token,
+            self.realroute,
+            self.cache_time,
+            Connector
+        )
 
         self.connector = self.factory.buildProtocol('noaddress')
         self.connector.send_event = lambda rk, event: None
@@ -89,15 +96,24 @@ class TestTCP2Canopsis(unittest.TestCase):
 
     def test_connector_processLine_devnull(self):
         self.connector.factory.realroute = 'devnull'
-        self.assertEqual(self.connector.getRealRoute(), self.connector.processLineDevNull)
+        self.assertEqual(
+            self.connector.getRealRoute(),
+            self.connector.processLineDevNull
+        )
 
     def test_connector_processLine_amqp(self):
         self.connector.factory.realroute = 'amqp'
-        self.assertEqual(self.connector.getRealRoute(), self.connector.processLineAMQP)
+        self.assertEqual(
+            self.connector.getRealRoute(),
+            self.connector.processLineAMQP
+        )
 
     def test_connector_processLine_default(self):
         self.connector.factory.realroute = None
-        self.assertEqual(self.connector.getRealRoute(), self.connector.processLineAMQP)
+        self.assertEqual(
+            self.connector.getRealRoute(),
+            self.connector.processLineAMQP
+        )
 
     def test_daemon_config_fail(self):
         with self.assertRaises(RuntimeError):
