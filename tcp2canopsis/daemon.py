@@ -19,6 +19,7 @@ class Application(object):
             'ssl-cert': {'type': 'string', 'required': False},
             'ssl-key': {'type': 'string', 'required': False},
             'realroute': {'type': 'string', 'required': False}
+            'cache_time': {'type': 'integer', 'required': False}
         }
     }
 
@@ -55,6 +56,7 @@ class Application(object):
             self.config['amqp'],
             self.config.get('token', None),
             self.realroute,
+            self.config.get('cache_time', 5),
             Connector
         )
 

@@ -90,7 +90,8 @@ class Connector(basic.LineReceiver):
     def processLineAMQP(self, line):
         event = self.parse_event(line)
         rk = self.generate_rk(event)
-        self.send_event(rk, event)
+
+        self.factory.cache[rk] = event
 
     def processLineDevNull(self, line):
         pass
@@ -122,18 +123,19 @@ class Connector(basic.LineReceiver):
 
         return rk
 
-    def send_event(self, rk, event):
-        try:
-            self.factory.logger.debug(u'Send event: {0}'.format(rk))
 
-            with Connection(self.factory.amqpuri) as conn:
-                with producers[conn].acquire(block=True) as producer:
-                    producer.publish(
-                        event,
-                        serializer='json',
-                        exchange='canopsis.events',
-                        routing_key=rk
-                    )
+def send_event(factory, rk, event):
+    try:
+        factory.logger.debug(u'Send event: {0}'.format(rk))
 
-        except Exception as err:
-            raise ConnectorError('Cannot send event: {0}'.format(str(err)))
+        with Connection(factory.amqpuri) as conn:
+            with producers[conn].acquire(block=True) as producer:
+                producer.publish(
+                    event,
+                    serializer='json',
+                    exchange='canopsis.events',
+                    routing_key=rk
+                )
+
+    except Exception as err:
+        raise ConnectorError('Cannot send event: {0}'.format(str(err)))
