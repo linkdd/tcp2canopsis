@@ -18,7 +18,7 @@ class Application(object):
             'token': {'type': 'string', 'required': False},
             'ssl-cert': {'type': 'string', 'required': False},
             'ssl-key': {'type': 'string', 'required': False},
-            'realroute': {'type': 'string', 'required': False}
+            'realroute': {'type': 'string', 'required': False},
             'cache_time': {'type': 'integer', 'required': False}
         }
     }
