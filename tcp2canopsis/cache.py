@@ -17,19 +17,19 @@ class Cache(object):
         self.stop = emitter()
 
     def __getitem__(self, rk):
-        if rk not in self.events:
+        if rk not in self.events.keys():
             self.events[rk] = []
 
         return self.events[rk]
 
     def __setitem__(self, rk, event):
-        if rk not in self.events:
+        if rk not in self.events.keys():
             self.events[rk] = []
 
         self.events[rk].append(event)
 
     def emit(self):
-        for rk in self.events:
+        for rk in self.events.keys():
             if len(self.events[rk]) > 0:
                 self.factory.logger.info(u'Emit: {0}'.format(rk))
 
