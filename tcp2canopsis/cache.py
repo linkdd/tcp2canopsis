@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from tcp2canopsis.errors import ConnectorError
 from tcp2canopsis.connector import send_event
 from tcp2canopsis.utils import setInterval
 
@@ -33,4 +34,9 @@ class Cache(object):
                 self.factory.logger.info(u'Emit: {0}'.format(rk))
 
                 event = self.events[rk].pop(0)
-                send_event(self.factory, rk, event)
+
+                try:
+                    send_event(self.factory, rk, event)
+
+                except ConnectorError as err:
+                    self.factory.log_exception(err)
